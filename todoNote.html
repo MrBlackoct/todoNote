@@ -1,63 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<script src="https://cdn.bootcss.com/angular.js/1.4.6/angular.min.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">        
+<script src="http://cdn.static.runoob.com/libs/angular.js/1.4.6/angular.min.js"></script>
+<script src="https://apps.bdimg.com/libs/angular-route/1.3.13/angular-route.js"></script>
+
+<script type="text/javascript">
+        var app = angular.module('myApp',['ngRoute'])
+        app.controller('myController', function ($scope, $route) { 
+            $scope.$route = $route;
+            $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
+            $scope.doneList = [{todoText:'',done:false,isComplete:false}];
+    
+            $scope.todoAdd = function(){ 
+                $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
+                $scope.todoInput = "";
+            }
+    
+            $scope.remove = function() {
+                var oldList = $scope.todoList;
+                $scope.todoList = [];
+                angular.forEach(oldList, function(x) {
+                    if (!x.done) $scope.todoList.push(x);
+                });
+            };
+            $scope.complete = function(){
+                angular.forEach($scope.todoList,function(x){
+                    if (x.done) {
+                        $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true});
+                        $scope.remove();
+                        }
+                })
+            }
+        })
+
+        app.controller('NormalController', function ($scope, $route) { $scope.$route = $route;})
+        
+
+        app.config(function($routeProvider){
+            $routeProvider.
+                when('/work',{
+                    templateUrl: 'work-template.html',
+                    controller: 'myController'
+                }).
+                when('/normal',{
+                    templateUrl: 'normal.html',
+                    controller: 'myController'
+                }).
+                otherwise({
+                    redirectTo:'/work'
+                });
+        });
+
+        
+        
+    </script>
+
 </head>
-<body ng-app="myApp" ng-controller="todoCtrl">
- <h2>My TODO Note</h2>
 
- <div>
-    <h3>TODO</h3>
-    <form ng-submit="todoAdd()">
-    <input type="text" ng-model="todoInput" size="50" placeholder="New">
-    <input type="submit" value="Add">
-    </form>
-    <br>
-    <div ng-repeat="x in todoList" >
-        <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+<body ng-app="myApp" class="ng-scope">
+    <script type="text/ng-template" id="work-template.html">
+        <h3>WORK-TODO</h3>
+        <form ng-submit="todoAdd()">
+            <input type="text" ng-model="todoInput" size="50" placeholder="New">
+            <input type="submit" value="Add">
+        </form>
+        <br>
+        <div ng-repeat="x in todoList" >
+            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+        </div>
+        <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
+
+        <h3>WORK-DONE</h3>
+        <div ng-repeat="x in doneList" ng-show="x.isComplete">
+            <label>
+                <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+            </label>
+        </div>
+        <p><button ng-click="undone()">unDone</button>
+    </script>
+
+    <script type="text/ng-template" id="normal.html">
+        <h3>NORMAL-TODO</h3>
+        <form ng-submit="todoAdd()">
+            <input type="text" ng-model="todoInput" size="50" placeholder="New">
+            <input type="submit" value="Add">
+        </form>
+        <br>
+        <div ng-repeat="x in todoList" >
+            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+        </div>
+        <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
+
+        <h3>NORMAL-DONE</h3>
+        <div ng-repeat="x in doneList" ng-show="x.isComplete">
+            <label>
+                <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+            </label>
+        </div>
+        <p><button ng-click="undone()">unDone</button>
+   </script>
+
+ <div id="navagation">
+    <h2>My TODO Note</h2>
+    <ul>
+        <li><a href="#/work">work</a></li>
+        <li><a href="#/normal">normal</a></li>
+    </ul>
+    <div ng-view="">
     </div>
-    <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
-</div>
-
-<div>
-    <h3>DONE</h3>
-    <div ng-repeat="x in doneList" ng-show="x.isComplete">
-        <label>
-            <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
-        </label>
-    </div>
-    <p><button ng-click="undone()">unDone</button>
-</div>
-
-
-<script>
-    var app = angular.module('myApp',[]);
-    app.controller('todoCtrl',function($scope){
-        $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
-        $scope.doneList = [{todoText:'',done:false,isComplete:false}];
-
-        $scope.todoAdd = function(){ 
-            $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
-            $scope.todoInput = "";
-        }
-
-        $scope.remove = function() {
-            var oldList = $scope.todoList;
-            $scope.todoList = [];
-            angular.forEach(oldList, function(x) {
-                if (!x.done) $scope.todoList.push(x);
-            });
-        };
-        $scope.complete = function(){
-            angular.forEach($scope.todoList,function(x){
-                if (x.done) {
-                    $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true});
-                    $scope.remove();
-                    }
-            })
-        }
-    });
-</script>
+ </div>
 </body>
 </html>
