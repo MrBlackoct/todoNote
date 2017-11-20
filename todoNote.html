@@ -6,11 +6,11 @@
 <script src="https://apps.bdimg.com/libs/angular-route/1.3.13/angular-route.js"></script>
 
 <script type="text/javascript">
-        var app = angular.module('myApp',['ngRoute'])
-        app.controller('myController', function ($scope, $route) { 
-            $scope.$route = $route;
+        var app = angular.module('myApp',[])
+        app.controller('myController', function ($scope) { 
             $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
             $scope.doneList = [{todoText:'',done:false,isComplete:false}];
+            $scope.mode = true;
     
             $scope.todoAdd = function(){ 
                 $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
@@ -32,40 +32,25 @@
                         }
                 })
             }
-        })
-
-        app.controller('NormalController', function ($scope, $route) { $scope.$route = $route;})
-        
-
-        app.config(function($routeProvider){
-            $routeProvider.
-                when('/work',{
-                    templateUrl: 'work-template.html',
-                    controller: 'myController'
-                }).
-                when('/normal',{
-                    templateUrl: 'normal.html',
-                    controller: 'myController'
-                }).
-                otherwise({
-                    redirectTo:'/work'
-                });
-        });
-
-        
-        
+            $scope.changeMode = function(){
+                $scope.mode = !$scope.mode;
+            }
+        })    
     </script>
 
 </head>
 
-<body ng-app="myApp" class="ng-scope">
-    <script type="text/ng-template" id="work-template.html">
+<body ng-app="myApp" class="ng-scope" ng-controller="myController">
+    <h2>My TODO Note</h2>
+    <div ng-show="!mode">
         <h3>WORK-TODO</h3>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
             <input type="submit" value="Add">
         </form>
-        <br>
+
+    </br>
+
         <div ng-repeat="x in todoList" >
             <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
         </div>
@@ -78,9 +63,10 @@
             </label>
         </div>
         <p><button ng-click="undone()">unDone</button>
-    </script>
+        <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
+    </div>
 
-    <script type="text/ng-template" id="normal.html">
+    <div ng-hide="!mode">
         <h3>NORMAL-TODO</h3>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
@@ -99,16 +85,7 @@
             </label>
         </div>
         <p><button ng-click="undone()">unDone</button>
-   </script>
-
- <div id="navagation">
-    <h2>My TODO Note</h2>
-    <ul>
-        <li><a href="#/work">work</a></li>
-        <li><a href="#/normal">normal</a></li>
-    </ul>
-    <div ng-view="">
+        <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
     </div>
- </div>
 </body>
 </html>
