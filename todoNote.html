@@ -6,37 +6,57 @@
 </head>
 <body ng-app="myApp" ng-controller="todoCtrl">
  <h2>My TODO Note</h2>
- <form ng-submit="todoAdd()">
- <input type="text" ng-model="todoInput" size="50" placeholder="New">
- <input type="submit" value="New">
-</form>
 
-<br>
-
-
-<div ng-repeat="x in todoList">
-    <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+ <div>
+    <h3>TODO</h3>
+    <form ng-submit="todoAdd()">
+    <input type="text" ng-model="todoInput" size="50" placeholder="New">
+    <input type="submit" value="Add">
+    </form>
+    <br>
+    <div ng-repeat="x in todoList" >
+        <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+    </div>
+    <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
 </div>
 
-<p><button ng-click="remove()">Delete</button></p>
+<div>
+    <h3>DONE</h3>
+    <div ng-repeat="x in doneList" ng-show="x.isComplete">
+        <label>
+            <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+        </label>
+    </div>
+    <p><button ng-click="undone()">unDone</button>
+</div>
+
 
 <script>
     var app = angular.module('myApp',[]);
     app.controller('todoCtrl',function($scope){
-        $scope.todoList = [{todoText:'CLEAN HOUSE',done:false}];
+        $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
+        $scope.doneList = [{todoText:'',done:false,isComplete:false}];
 
-        $scope.todoAdd = function(){
-            $scope.todoList.push({todoText:$scope.todoInput,done:false});
+        $scope.todoAdd = function(){ 
+            $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
             $scope.todoInput = "";
         }
 
-        $scope.remove = function(){
+        $scope.remove = function() {
             var oldList = $scope.todoList;
             $scope.todoList = [];
-            angular.forEach(oldeList,function(x){
+            angular.forEach(oldList, function(x) {
                 if (!x.done) $scope.todoList.push(x);
             });
         };
+        $scope.complete = function(){
+            angular.forEach($scope.todoList,function(x){
+                if (x.done) {
+                    $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true});
+                    $scope.remove();
+                    }
+            })
+        }
     });
 </script>
 </body>
