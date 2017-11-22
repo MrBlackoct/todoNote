@@ -8,16 +8,17 @@
 <script type="text/javascript">
         var app = angular.module('myApp',[])
         app.controller('myController', function ($scope) { 
-            $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
-            $scope.doneList = [{todoText:'',done:false,isComplete:false}];
+            $scope.todoList = [];
+            $scope.doneList = [];
             $scope.mode = true;
-            $scope.todoSummary;
+            $scope.todoSummary; 
+            $scope.completeSummary;
     
-            $scope.$watch('todoList', function(){
+            $scope.$watch('todoList + doneList', function(){
                 $scope.todoSummary = $scope.todoList.length;
-            });
+                $scope.completeSummary = $scope.doneList.length;
+            },true);
             
-
             $scope.todoAdd = function(){ 
                 $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
                 $scope.todoInput = "";
@@ -34,32 +35,31 @@
                 angular.forEach($scope.todoList,function(x){
                     if (x.done) {
                         $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true});
-                        $scope.remove();
-                        }
+                        x.isComplete = "true";
+                        x.done = false;
+                        } 
                 })
             }
             $scope.changeMode = function(){
                 $scope.mode = !$scope.mode;
             }
-        })    
+        })
     </script>
 </head>
 <body ng-app="myApp" class="ng-scope" ng-controller="myController">
     <h2>My TODO Note</h2>
     <div ng-show="!mode">
-        <label >{{todoSummary}}</label>
         <h3>WORK-TODO</h3>
+        <label >{{todoSummary - completeSummary}}</label>/<label >{{todoSummary}}</label>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
             <input type="submit" value="Add" ng-disabled=!todoInput>
         </form>
-
-    </br>
-
-        <div ng-repeat="x in todoList" >
-            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+        <br>
+        <div ng-repeat="x in todoList" ng-hide="x.isComplete">
+            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">
         </div>
-        <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
+        <p><button ng-click="remove()" ng-disabled="">Delete</button> <button ng-click="complete()">Complete</button></p>
 
         <h3>WORK-DONE</h3>
         <div ng-repeat="x in doneList" ng-show="x.isComplete">
@@ -72,18 +72,19 @@
     </div>
 
     <div ng-hide="!mode">
-        <h3>NORMAL-TODO</h3>
+        <h3>Normal-TODO</h3>
+        <label >{{todoSummary - completeSummary}}</label>/<label >{{todoSummary}}</label>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
-            <input type="submit" value="Add" >
+            <input type="submit" value="Add" ng-disabled=!todoInput>
         </form>
         <br>
-        <div ng-repeat="x in todoList" >
-            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">  
+        <div ng-repeat="x in todoList" ng-hide="x.isComplete">
+            <input type=checkbox ng-model="x.done"><input type="text" ng-model="x.todoText" size="50" placeholder="x.todoText">
         </div>
-        <p><button ng-click="remove()">Delete</button> <button ng-click="complete()">Complete</button></p>
-
-        <h3>NORMAL-DONE</h3>
+        <p><button ng-click="remove()" ng-disabled="">Delete</button> <button ng-click="complete()">Complete</button></p>
+    
+        <h3>Normal-DONE</h3>
         <div ng-repeat="x in doneList" ng-show="x.isComplete">
             <label>
                 <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
