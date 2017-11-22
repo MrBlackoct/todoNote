@@ -11,12 +11,18 @@
             $scope.todoList = [{todoText:'HELLO A NEW DAY',done:false,isComplete:false}];
             $scope.doneList = [{todoText:'',done:false,isComplete:false}];
             $scope.mode = true;
+            $scope.todoSummary;
     
+            $scope.$watch('todoList', function(){
+                $scope.todoSummary = $scope.todoList.length;
+            });
+            
+
             $scope.todoAdd = function(){ 
                 $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
                 $scope.todoInput = "";
             }
-    
+
             $scope.remove = function() {
                 var oldList = $scope.todoList;
                 $scope.todoList = [];
@@ -37,16 +43,15 @@
             }
         })    
     </script>
-
 </head>
-
 <body ng-app="myApp" class="ng-scope" ng-controller="myController">
     <h2>My TODO Note</h2>
     <div ng-show="!mode">
+        <label >{{todoSummary}}</label>
         <h3>WORK-TODO</h3>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
-            <input type="submit" value="Add">
+            <input type="submit" value="Add" ng-disabled=!todoInput>
         </form>
 
     </br>
@@ -62,7 +67,7 @@
                 <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
             </label>
         </div>
-        <p><button ng-click="undone()">unDone</button>
+        <p><button ng-click="undone()">Undone</button>
         <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
     </div>
 
@@ -70,7 +75,7 @@
         <h3>NORMAL-TODO</h3>
         <form ng-submit="todoAdd()">
             <input type="text" ng-model="todoInput" size="50" placeholder="New">
-            <input type="submit" value="Add">
+            <input type="submit" value="Add" >
         </form>
         <br>
         <div ng-repeat="x in todoList" >
@@ -84,7 +89,7 @@
                 <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
             </label>
         </div>
-        <p><button ng-click="undone()">unDone</button>
+        <p><button ng-click="undone()">Undone</button>
         <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
     </div>
 </body>
