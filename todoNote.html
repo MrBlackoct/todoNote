@@ -7,23 +7,28 @@
 
 <script type="text/javascript">
         var app = angular.module('myApp',[])
-        app.controller('myController', function ($scope) { 
+        app.controller('myController',function ($scope) {
+
             $scope.todoList = [];
             $scope.doneList = [];
             $scope.mode = true;
             $scope.todoSummary; 
             $scope.completeSummary;
+            $scope.id = 0;
     
+            //深度实时监控两个数组的长度,实现进度数据的更新
             $scope.$watch('todoList + doneList', function(){
                 $scope.todoSummary = $scope.todoList.length;
                 $scope.completeSummary = $scope.doneList.length;
             },true);
             
             $scope.todoAdd = function(){ 
-                $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false});
+                $scope.todoList.push({todoText:$scope.todoInput,done:false,isComplete:false,id:$scope.id});
                 $scope.todoInput = "";
+                $scope.id++;
             }
 
+            //将原数组置为空,然后根据done的值重新压入.(原id不变)
             $scope.remove = function() {
                 var oldList = $scope.todoList;
                 $scope.todoList = [];
@@ -34,7 +39,7 @@
             $scope.complete = function(){
                 angular.forEach($scope.todoList,function(x){
                     if (x.done) {
-                        $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true});
+                        $scope.doneList.push({todoText:x.todoText,done:false,isComplete:true,id:$scope.id});
                         x.isComplete = "true";
                         x.done = false;
                         } 
@@ -64,10 +69,9 @@
         <h3>WORK-DONE</h3>
         <div ng-repeat="x in doneList" ng-show="x.isComplete">
             <label>
-                <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+                <span ng-bind="x.todoText"></span>
             </label>
         </div>
-        <p><button ng-click="undone()">Undone</button>
         <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
     </div>
 
@@ -87,10 +91,9 @@
         <h3>Normal-DONE</h3>
         <div ng-repeat="x in doneList" ng-show="x.isComplete">
             <label>
-                <input type="checkbox" ng-model="x.done"><span ng-bind="x.todoText"></span>
+                <span ng-bind="x.todoText"></span>
             </label>
         </div>
-        <p><button ng-click="undone()">Undone</button>
         <p><button ng-click="changeMode()">WORK/NORMAL</button></p>
     </div>
 </body>
